@@ -2,7 +2,7 @@
 
 ## Acknowledgment
 
-I would like to thank the Unimelb COMP90054 Teaching Team for providing the code framework and the opportunity to explore various AI techniques in this project.
+I would like to thank the Unimelb COMP90054 2022S2 teaching team for providing the code framework and the opportunity to explore various AI techniques in this project.
 
 ## Project Introduction
 
