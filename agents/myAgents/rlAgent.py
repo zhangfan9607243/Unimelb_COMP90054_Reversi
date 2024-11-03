@@ -7,7 +7,7 @@ from Reversi.reversi_utils import Cell
 from template import Agent
 from Reversi.reversi_model import ReversiGameRule
 import sys
-sys.path.append("agents/t_036/")
+sys.path.append("agents/myAgents/")
 import json
 
 class myAgent(Agent):
@@ -20,9 +20,8 @@ class myAgent(Agent):
         self.sub_corner_pos = [(1,1), (1,6), (6,1), (6,6)]
         self.epsilon = 0.6
         self.gamma = 0.9
-        self.alpha = 0.1
         self.weight = [0, 0, 0, 0, 0, 0]
-        with open("agents/t_036/rl_weight.json", "r", encoding="utf-8") as fw:
+        with open("agents/myAgents/rl_weight.json", "r", encoding="utf-8") as fw:
             self.weight = json.load(fw)["weight"]
 
     def GetActions(self, state):
@@ -116,46 +115,13 @@ class myAgent(Agent):
         start_time = time.time()
         solution = random.choice(actions)
         best_Q_value = -999999
-        if random.uniform(0,1) < 1-self.epsilon:
-            for action in actions:
-                if time.time() - start_time > self.think_time:
-                    print("Time out !")
-                    break
-                Q_value = self.CalQValue(game_state, action)
-                if Q_value > best_Q_value:
-                    best_Q_value = Q_value
-                    solution = action
-        else:
-            Q_value = self.CalQValue(game_state, solution)
-            best_Q_value = Q_value
-        next_state = self.ExcuteAction(game_state, solution)
-        # oppo move
-        oppo_new_actions = self.OppoGetActions(next_state)
-        oppo_max_score = 0
-        oppo_best_state = next_state
-        for oppo_action in oppo_new_actions:
-            oppo_next_state = self.OppoExcuteAction(next_state, oppo_action)
-            oppo_next_score = self.game_rule.calScore(next_state, 1-self.id)
-            if oppo_next_score > oppo_max_score:
-                oppo_max_score = oppo_next_score
-                oppo_best_state = oppo_next_state
-        next_state = oppo_best_state
-        reward = self.CalculateScore(next_state)
-
-        next_actions = self.GetActions(next_state)
-        best_next_Q_value = -999999
-        for action in next_actions:
+        for action in actions:
             if time.time() - start_time > self.think_time:
                 print("Time out !")
                 break
-            Q_value = self.CalQValue(next_state, action)
-            best_next_Q_value = max(Q_value,best_next_Q_value)
-
-        features = self.CalFeatures(game_state, solution)
-        delta_value = reward + self.gamma * best_next_Q_value - best_Q_value
-        for i in range(len(features)):
-            self.weight[i] += self.alpha * delta_value * features[i]
-        with open("agents/t_036/rl_weight.json", "w", encoding="utf-8") as fw:
-            json.dump({"weight": self.weight}, fw, indent=4, ensure_ascii=False)
+            Q_value = self.CalQValue(game_state, action)
+            if Q_value > best_Q_value:
+                best_Q_value = Q_value
+                solution = action
 
         return solution
